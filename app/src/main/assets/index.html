@@ -46,6 +46,7 @@ h1 { font-weight: 700; font-size: 2rem; margin: 0; line-height: 1.2; letter-spac
 .bubble { flex: 1; min-width: 0; background: var(--ink); color: #1b1720; padding: 10px 12px; font-weight: 600; line-height: 1.25; min-height: 3.4em; max-height: 100%; overflow: hidden; display: flex; align-items: center; margin: 3px;
   box-shadow: 0 0 0 3px var(--edge), inset -3px -3px 0 rgba(0,0,0,.18); text-wrap: balance; }
 .smith { width: 84px; height: 72px; flex: none; } .smith img { object-fit: contain; image-rendering: pixelated; }
+#app.nosmith .forger { display: none; }
 main { flex: 1; display: flex; align-items: center; justify-content: center; padding-block: 4px; }
 .screen { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 .screen[hidden] { display: none !important; }
@@ -467,6 +468,8 @@ const CONFIG = {
   peekMs: 500,                   // all cards shown face up at the start of a game
   flipMs: 200,                   // measured: a flip takes about 0.2 s
   cardGap: 6,                    // px between cards
+  hideSmithPairs: [9, 14, 16, 20], // during a game with these pair counts the forger is hidden to give the cards more room
+  wideBoardPairs: [12],          // these pair counts let the board use the side margins for bigger cards
   maxCard: 120,                  // px, upper limit for the card size on big screens
   lines: {
     idle:  ["Could use a break. Care for a game?"],
@@ -513,6 +516,7 @@ function show(id) {
   ["s-intro", "s-set", "s-rec", "s-ready", "s-play", "s-end"].forEach(s => $(s).hidden = s !== id);
   const inGame = id === "s-ready" || id === "s-play";
   $("hud").hidden = !inGame;
+  $("app").classList.toggle("nosmith", id === "s-play" && !!g && CONFIG.hideSmithPairs.includes(g.deck.length / 2));
   $("hdr").hidden = inGame;            /* hide the title during a game to give the cards more room */
   $("leaveBtn").disabled = id === "s-ready";
   $("againBtn").hidden = id !== "s-end";
@@ -708,12 +712,14 @@ function startPlay() {
 function layoutBoard() {
   if (!g) return;
   const gap = CONFIG.cardGap, n = g.deck.length, pad = 6;
-  const W = $("app").clientWidth - pad;
-  const top = document.querySelector("main").getBoundingClientRect().top + window.scrollY;
-  const rootPadBottom = parseFloat(getComputedStyle(document.documentElement).paddingBottom) || 0;
-  /* space below the board: timer bar, page gaps, body padding and the empty button row */
-  const reserve = $("hud").offsetHeight + 14 + 12 + 8 + 18 + rootPadBottom + pad;
-  const H = Math.max(160, window.innerHeight - top - reserve);
+  /* some pair counts may use the side margins (keeping 4px from the screen edge) for bigger cards */
+  const extra = CONFIG.wideBoardPairs.includes(n / 2) ? Math.max(0, Math.min(12, (window.innerWidth - $("app").clientWidth) / 2 - 4)) : 0;
+  const W = $("app").clientWidth - pad + 2 * extra;
+  const mainTop = document.querySelector("main").getBoundingClientRect().top;
+  const hudTop = $("hud").getBoundingClientRect().top;
+  if ($("hud").hidden) return;
+  /* the board may fill the stage down to a small gap above the timer bar (main has 4px padding top and bottom) */
+  const H = Math.max(160, hudTop - mainTop - 8 - 12);
   let best = null;
   for (let c = 2; c <= n / 2; c++) {
     if (n % c) continue;
@@ -724,6 +730,7 @@ function layoutBoard() {
   const s = Math.floor(best.size);
   const board = $("board");
   board.style.gridTemplateColumns = "repeat(" + best.c + ", " + s + "px)";
+  board.style.marginInline = extra ? "0" : "";   /* auto margins would pin a board wider than the column to the left */
   board.style.setProperty("--cs", s + "px");
 }
 window.addEventListener("resize", layoutBoard);
