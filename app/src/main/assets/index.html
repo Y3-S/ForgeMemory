@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Forge Memory</title>
 <style>
-@font-face { font-family: "Grenze"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/grenze-400.woff2") format("woff2"); }
-@font-face { font-family: "Grenze"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/grenze-500.woff2") format("woff2"); }
-@font-face { font-family: "Grenze"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/grenze-600.woff2") format("woff2"); }
-@font-face { font-family: "Grenze"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/grenze-700.woff2") format("woff2"); }
 /* Layout: one phone-width column. Header, forger with speech bubble, a middle stage that swaps between screens,
    and a bar at the bottom with the timer and Leave. Pixel art look: hard edges, stepped bevels, sprites drawn in code.
    Single dark look by choice: a forge at night. */
@@ -81,14 +77,13 @@ img.lockbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 1
 .pr-labels .sep { visibility: hidden; }
 .pr-scroll { position: relative; flex: 1; min-width: 0; }
 .pr-more { position: absolute; top: 0; right: 0; bottom: 10px; width: 54px; display: flex; align-items: center; justify-content: flex-end; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,0), var(--bg) 70%); }
-.pr-more img { width: 28px; height: 28px; transform: scaleX(-1); animation: nudge 1.2s steps(4) infinite; }
+.pr-more .tri { margin-inline-end: 4px; animation: nudge 1.2s steps(4) infinite; }
 @keyframes nudge { 0%, 100% { translate: 0 0; } 50% { translate: 6px 0; } }
-@media (prefers-reduced-motion: reduce) { .pr-more img { animation: none; } }
 .pr-tip { margin: 0; color: var(--muted); font-size: 1rem; text-align: center; }
 .preset .pbtn { touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .hud .leave.holding { animation: holdgo .6s linear forwards; }
 @keyframes holdgo { from { box-shadow: inset 0 0 0 0 rgba(255,255,255,.5); } to { box-shadow: inset 0 -60px 0 0 rgba(255,255,255,.5); } }
-.hud .leave { touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.hud .leave { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .preset .pbtn.holding { animation: hold .6s linear forwards; }
 @keyframes hold { from { box-shadow: inset 0 0 0 0 #8e2119; } to { box-shadow: inset 0 -90px 0 0 #8e2119; } }
 .preset .pbtn { font-variant-numeric: lining-nums; display: flex; flex-direction: column; align-items: center; min-width: 56px; font-size: 1.3rem; }
@@ -233,7 +228,7 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
 #bkMsg { min-height: 1.3em; color: var(--pick); }
 #bkMsg.err { color: var(--bad); }
 /* skins and decks: one row that scrolls sideways, the next tile peeks in to show there is more */
-#skinGrid, #deckList { display: flex; grid-template-columns: none; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; padding: 4px 4px 12px; margin-inline: -4px; text-align: center; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+#skinGrid, #deckList { display: flex; grid-template-columns: none; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 4px; -webkit-overflow-scrolling: touch; padding: 4px 4px 12px; margin-inline: -4px; text-align: center; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 #skinGrid, #deckList { min-width: 0; max-width: 100%; box-sizing: border-box; }
 #skinDlg .dlg-box { overflow-x: hidden; }
 #skinDlg .dlg-box > * { flex: none; }
@@ -248,14 +243,13 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
 .scr .more.r { right: -4px; justify-content: flex-end; background: linear-gradient(90deg, rgba(0,0,0,0), var(--panel) 72%); }
 .scr .more.l { left: -4px; justify-content: flex-start; background: linear-gradient(270deg, rgba(0,0,0,0), var(--panel) 72%); }
 .scr .more[hidden] { display: none; }
-.scr .more i { display: block; width: 14px; height: 22px; margin-inline: 8px; background: var(--ink); clip-path: polygon(0 0, 100% 50%, 0 100%); }
-.scr .more.r i { animation: nudge 1.2s steps(4) infinite; }
-.scr .more.l i { transform: scaleX(-1); animation: nudgeL 1.2s steps(4) infinite; }
+.tri { display: block; width: 14px; height: 26px; background: var(--ink); image-rendering: pixelated; -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%207%2013%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%221%22%20width%3D%222%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%222%22%20width%3D%223%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%223%22%20width%3D%224%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%224%22%20width%3D%225%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%225%22%20width%3D%226%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%226%22%20width%3D%227%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%227%22%20width%3D%226%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%228%22%20width%3D%225%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%229%22%20width%3D%224%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2210%22%20width%3D%223%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2211%22%20width%3D%222%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%207%2013%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%221%22%20width%3D%222%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%222%22%20width%3D%223%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%223%22%20width%3D%224%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%224%22%20width%3D%225%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%225%22%20width%3D%226%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%226%22%20width%3D%227%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%227%22%20width%3D%226%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%228%22%20width%3D%225%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%229%22%20width%3D%224%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2210%22%20width%3D%223%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2211%22%20width%3D%222%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat; }
+.scr .more .tri { margin-inline: 8px; }
+.scr .more.r .tri { animation: nudge 1.2s steps(4) infinite; }
+.scr .more.l .tri { transform: scaleX(-1); animation: nudgeL 1.2s steps(4) infinite; }
 @keyframes nudgeL { 0%, 100% { translate: 0 0; } 50% { translate: -6px 0; } }
-@media (prefers-reduced-motion: reduce) { .scr .more i { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .scr .more .tri, .pr-more .tri { animation: none !important; } }
 </style>
-</head>
-<body>
 
 <div id="app">
   <header id="hdr"><h1>FORGE MEMORY</h1><button id="skinBtn" class="alt" type="button" aria-label="Choose skin" title="Skin"></button></header>
@@ -293,7 +287,7 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
           <div class="pr-labels" aria-hidden="true"><span>Cards</span><i class="sep"></i><span>Seconds</span></div>
           <div class="pr-scroll">
             <div class="presets" id="presets"></div>
-            <div class="pr-more" id="prMore" hidden aria-hidden="true"><img class="px" id="prMoreImg" alt="" src=""></div>
+            <div class="pr-more" id="prMore" hidden aria-hidden="true"><i class="tri"></i></div>
           </div>
         </div>
         <p class="pr-tip">Hold a preset to delete or lock it.</p>
@@ -516,7 +510,7 @@ const CONFIG = {
   peekMs: 500,                   // all cards shown face up at the start of a game
   flipMs: 200,                   // measured: a flip takes about 0.2 s
   cardGap: 6,                    // px between cards
-  hideSmithPairs: [9, 14, 16, 20], // during a game with these pair counts the forger is hidden to give the cards more room
+  hideSmithPairs: [9, 14, 16, 18, 20], // during a game with these pair counts the forger is hidden to give the cards more room
   wideBoardPairs: [12],          // these pair counts let the board use the side margins for bigger cards
   maxCard: 120,                  // px, upper limit for the card size on big screens
   lines: {
@@ -571,6 +565,7 @@ function show(id) {
   $("hdr").hidden = inGame;            /* hide the title during a game to give the cards more room */
   $("leaveBtn").disabled = id === "s-ready";
   $("againBtn").hidden = id !== "s-end";
+  if (id === "s-set") updateMore();   /* sizes are only known once the screen is visible */
   $("newBtn").hidden = id !== "s-end";
   $("endRecBtn").hidden = id !== "s-end";
   $("startBtn").hidden = id !== "s-set" && id !== "s-rec";
@@ -682,7 +677,7 @@ function toRecords() { stopTimer(); say("records"); resetClear(); renderRecords(
 $("recBtn").onclick = toRecords;
 $("endRecBtn").onclick = toRecords;
 setIcon("dlgNo", "cross"); setIcon("dlgYes", "trash"); $("dlgIco").src = BTN_ICON.warn;
-shiftLabels(); $("prMoreImg").src = BTN_ICON.back; $("presets").addEventListener("scroll", updateMore, { passive: true }); window.addEventListener("resize", updateMore);
+shiftLabels(); $("presets").addEventListener("scroll", updateMore, { passive: true }); window.addEventListener("resize", updateMore);
 setIcon("endRecBtn", "trophy"); setIcon("homeSetBtn", "home"); setIcon("againBtn", "replay"); setIcon("newBtn", "home"); setIcon("leaveBtn", "home"); setIcon("startBtn", "play"); setIcon("recBtn", "trophy"); setIcon("recBack", "home"); resetClear();
 $("recBack").onclick = () => { resetClear(); toSettings(); };
 $("recClear").onclick = () => confirmDelete("Clear all records?", "Your fastest times for every number of cards will be deleted. This cannot be undone.",
@@ -770,7 +765,8 @@ function layoutBoard() {
   const hudTop = $("hud").getBoundingClientRect().top;
   if ($("hud").hidden) return;
   /* the board may fill the stage down to a small gap above the timer bar (main has 4px padding top and bottom) */
-  const H = Math.max(160, hudTop - mainTop - 8 - 12);
+  const padB = parseFloat(getComputedStyle($("app")).paddingBottom) || 0;   /* room the page keeps free for the bar */
+  const H = Math.max(160, Math.min(hudTop - mainTop - 8 - 12, window.innerHeight - padB - mainTop - 8 - 6));
   let best = null;
   for (let c = 2; c <= n / 2; c++) {
     if (n % c) continue;
@@ -797,7 +793,7 @@ function flip(n, el) {
   if (g.deck[a.n] === g.deck[b.n]) {
     setTimeout(() => {
       [a.el, b.el].forEach(e => { e.classList.remove("pick"); e.classList.add("done"); });
-      g.found += 2; say("match"); buzz(30);
+      g.found += 2; say("match");
       if (g.found === g.deck.length) { g.locked = false; finish(true); return; }
       if (g.found === g.deck.length - 2) {
         /* only one pair left: turn it over automatically */
@@ -816,7 +812,7 @@ function flip(n, el) {
       g.locked = false;
     }, CONFIG.flipMs);
   } else {
-    setTimeout(() => { say("miss"); buzz([40, 60, 40]); }, CONFIG.flipMs);
+    setTimeout(() => say("miss"), CONFIG.flipMs);
     setTimeout(() => {
       [a.el, b.el].forEach(e => e.classList.remove("up", "pick"));
       setTimeout(() => { g.locked = false; }, CONFIG.flipMs);
@@ -851,7 +847,6 @@ function finish(won) {
     }
     show("s-end");
     say(won ? "win" : "lose");
-    buzz(won ? [60, 80, 60, 80, 160] : 320);
   }, won ? CONFIG.flipMs + 300 : 0);
 }
 
@@ -865,6 +860,7 @@ $("newBtn").onclick = toSettings;            // Home: back to the settings scree
   const stop = () => { clearTimeout(timer); btn.classList.remove("holding"); };
   btn.addEventListener("pointerdown", e => {
     if (btn.disabled || e.button > 0) return;
+    try { btn.setPointerCapture(e.pointerId); } catch (_) {}   /* the finger may drift off the button without ending the hold */
     fired = false; sx = e.clientX; sy = e.clientY; btn.classList.add("holding");
     timer = setTimeout(() => {
       fired = true; btn.classList.remove("holding");
@@ -873,8 +869,8 @@ $("newBtn").onclick = toSettings;            // Home: back to the settings scree
       beginReady();
     }, 600);
   });
-  btn.addEventListener("pointermove", e => { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 10) stop(); });
-  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener("pointermove", e => { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 30) stop(); });
+  ["pointerup", "pointercancel"].forEach(ev => btn.addEventListener(ev, stop));
   btn.addEventListener("contextmenu", e => e.preventDefault());
   btn.onclick = () => { if (fired) { fired = false; return; } if (g) g.over = true; toSettings(); };
 })();
@@ -906,8 +902,8 @@ function applySkin(id) {
   ["skinGrid", "deckList"].forEach(id => {
     const row = $(id), wrap = document.createElement("div"); wrap.className = "scr";
     row.parentNode.insertBefore(wrap, row); wrap.appendChild(row);
-    ["l", "r"].forEach(k => { const m = document.createElement("div"); m.className = "more " + k; m.hidden = true; m.setAttribute("aria-hidden", "true"); m.innerHTML = "<i></i>"; wrap.appendChild(m); });
-    const upd = () => { const l = wrap.querySelector(".l"), r = wrap.querySelector(".r"); l.hidden = row.scrollLeft <= 4; r.hidden = !(row.scrollWidth - row.clientWidth - row.scrollLeft > 4); };
+    ["l", "r"].forEach(k => { const m = document.createElement("div"); m.className = "more " + k; m.hidden = true; m.setAttribute("aria-hidden", "true"); m.innerHTML = "<i class='tri'></i>"; wrap.appendChild(m); });
+    const upd = () => { const l = wrap.querySelector(".l"), r = wrap.querySelector(".r"); l.hidden = row.scrollLeft < 12; r.hidden = !(row.scrollWidth - row.clientWidth - row.scrollLeft >= 12); };
     row.addEventListener("scroll", upd, { passive: true }); hints.push(upd);
   });
   window.addEventListener("resize", () => hints.forEach(f => f()));
@@ -1034,5 +1030,5 @@ function applyDeck(id) {
 })();
 toIntro();
 </script>
-</body>
-</html>
+
+</body></html>
