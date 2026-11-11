@@ -2,7 +2,11 @@ package com.forgememory.game;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -14,6 +18,20 @@ import androidx.webkit.WebViewAssetLoader;
 /** Shows the game (assets/index.html) full screen in a WebView. Everything stays on the device. */
 public class MainActivity extends Activity {
     private WebView web;
+
+    /** Called from the game as AndroidVibe.vibrate(ms); more reliable than navigator.vibrate inside a WebView. */
+    private class Vibe {
+        @JavascriptInterface
+        public void vibrate(int ms) {
+            try {
+                Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                if (v == null || !v.hasVibrator()) return;
+                int d = Math.max(1, Math.min(ms, 200));
+                if (Build.VERSION.SDK_INT >= 26) v.vibrate(VibrationEffect.createOneShot(d, VibrationEffect.DEFAULT_AMPLITUDE));
+                else v.vibrate(d);
+            } catch (Exception ignored) { }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +50,7 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
         s.setMediaPlaybackRequiresUserGesture(true);
         web.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+        web.addJavascriptInterface(new Vibe(), "AndroidVibe");
         web.setLongClickable(false);
         web.setHapticFeedbackEnabled(false);
         web.setWebViewClient(new WebViewClient() {
