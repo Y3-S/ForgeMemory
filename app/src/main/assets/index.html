@@ -48,6 +48,7 @@ h1 { font-weight: 700; font-size: 2rem; margin: 0; line-height: 1.2; letter-spac
   box-shadow: 0 0 0 3px var(--edge), inset -3px -3px 0 rgba(0,0,0,.18); text-wrap: balance; }
 .smith { width: 84px; height: 72px; flex: none; } .smith img { object-fit: contain; image-rendering: pixelated; }
 #app.nosmith .forger { display: none; }
+.ready-frame { box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 12px; margin-inline: auto; border: 4px dashed var(--line); text-align: center; }
 #app.inplay main { align-items: flex-end; }   /* during a game the cards sit low, near the timer bar and the thumb */
 main { flex: 1; display: flex; align-items: center; justify-content: center; padding-block: 4px; }
 .screen { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
@@ -83,14 +84,17 @@ img.lockbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 1
 .pr-labels .sep { visibility: hidden; }
 .pr-scroll { position: relative; flex: 1; min-width: 0; }
 .pr-more { position: absolute; top: 0; right: 0; bottom: 10px; width: 54px; display: flex; align-items: center; justify-content: flex-end; cursor: pointer; background: linear-gradient(90deg, rgba(0,0,0,0), var(--bg) 70%); }
+.pr-more[hidden] { display: none; }
+.pr-more.l { right: auto; left: 0; justify-content: flex-start; background: linear-gradient(270deg, rgba(0,0,0,0), var(--bg) 70%); }
 .pr-more .tri { margin-inline-end: 4px; animation: nudge 1.2s steps(4) infinite; }
+.pr-more.l .tri { margin-inline: 4px 0; transform: scaleX(-1); animation: nudgeL 1.2s steps(4) infinite; }
 @keyframes nudge { 0%, 100% { translate: 0 0; } 50% { translate: 6px 0; } }
 .pr-tip { margin: 0; color: var(--muted); font-size: 1rem; text-align: center; }
 .preset .pbtn { touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.hud .leave.holding { animation: holdgo .6s linear forwards; }
+.hud .leave.holding { animation: holdgo .4s linear forwards; }
 @keyframes holdgo { from { box-shadow: inset 0 0 0 0 rgba(255,255,255,.5); } to { box-shadow: inset 0 -60px 0 0 rgba(255,255,255,.5); } }
 .hud .leave { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.preset .pbtn.holding { animation: hold .6s linear forwards; }
+.preset .pbtn.holding { animation: hold .4s linear forwards; }
 @keyframes hold { from { box-shadow: inset 0 0 0 0 #8e2119; } to { box-shadow: inset 0 -90px 0 0 #8e2119; } }
 .preset .pbtn { font-variant-numeric: lining-nums; display: flex; flex-direction: column; align-items: center; min-width: 56px; font-size: 1.3rem; }
 .presets { width: 100%; }
@@ -293,7 +297,8 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
           <div class="pr-labels" aria-hidden="true"><span>Cards</span><i class="sep"></i><span>Seconds</span></div>
           <div class="pr-scroll">
             <div class="presets" id="presets"></div>
-            <div class="pr-more" id="prMore" hidden role="button" aria-label="Scroll presets"><i class="tri"></i></div>
+            <div class="pr-more l" id="prMoreL" hidden role="button" aria-label="Scroll presets left"><i class="tri"></i></div>
+            <div class="pr-more" id="prMore" hidden role="button" aria-label="Scroll presets right"><i class="tri"></i></div>
           </div>
         </div>
         <p class="pr-tip">Hold a preset to delete or lock it.</p>
@@ -307,7 +312,7 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
     </section>
 
     <section class="screen" id="s-ready" hidden>
-      <p class="sub">Cards are hidden until the countdown ends.</p>
+      <div class="ready-frame" id="readyFrame"><p class="sub">Cards are hidden until the countdown ends.</p></div>
     </section>
 
     <section class="screen" id="s-play" hidden>
@@ -516,6 +521,7 @@ const CONFIG = {
   peekMs: 500,                   // all cards shown face up at the start of a game
   flipMs: 200,                   // measured: a flip takes about 0.2 s
   cardGap: 6,                    // px between cards
+  holdShowMs: 200,   /* the hold fill appears after this delay (a tap is shorter) and finishes at 600 ms */
   hideSmithPairs: [9, 14, 16, 18, 20], // during a game with these pair counts the forger is hidden to give the cards more room
   wideBoardPairs: [12],          // these pair counts let the board use the side margins for bigger cards
   maxCard: 120,                  // px, upper limit for the card size on big screens
@@ -567,8 +573,10 @@ function show(id) {
   ["s-intro", "s-set", "s-rec", "s-ready", "s-play", "s-end"].forEach(s => $(s).hidden = s !== id);
   const inGame = id === "s-ready" || id === "s-play";
   $("hud").hidden = !inGame;
-  $("app").classList.toggle("inplay", id === "s-play");
-  $("app").classList.toggle("nosmith", id === "s-play" && !!g && CONFIG.hideSmithPairs.includes(g.deck.length / 2));
+  $("app").classList.toggle("inplay", id === "s-play" || id === "s-ready");
+  /* the countdown screen uses the same layout as the game, so its frame lands exactly where the board will be */
+  const pairsNow = id === "s-play" ? (g ? g.deck.length / 2 : 0) : id === "s-ready" ? settings.pairs : 0;
+  $("app").classList.toggle("nosmith", CONFIG.hideSmithPairs.includes(pairsNow));
   $("hdr").hidden = inGame;            /* hide the title during a game to give the cards more room */
   $("leaveBtn").disabled = id === "s-ready";
   $("againBtn").hidden = id !== "s-end";
@@ -603,9 +611,11 @@ const shiftEl = (el, rem, w, sample) => { el.style.transform = "translateY(" + i
 function shiftLabels() { document.querySelectorAll(".pr-labels span").forEach(s => shiftEl(s, 1.05, 600)); }
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { shiftLabels(); renderSettings(); });
 $("prMore").addEventListener("click", () => $("presets").scrollBy({ left: $("presets").clientWidth * 0.8, behavior: "smooth" }));
+$("prMoreL").addEventListener("click", () => $("presets").scrollBy({ left: -$("presets").clientWidth * 0.8, behavior: "smooth" }));
 function updateMore() {
   const b = $("presets"), m = $("prMore");
-  m.hidden = !(b.scrollWidth - b.clientWidth - b.scrollLeft > 4);
+  m.hidden = !(b.scrollWidth - b.clientWidth - b.scrollLeft >= 12);
+  $("prMoreL").hidden = b.scrollLeft < 12;
 }
 function renderSettings(note) {
   $("pairsIn").value = settings.pairs;
@@ -628,11 +638,12 @@ function renderSettings(note) {
       else openDialog({ title: label, text: "Delete this preset, or lock it so it cannot be deleted.", icon: "warn", mid: { fn: toggle, icon: "lock", label: "Lock preset" },
         yes: () => { presets.splice(i, 1); store.set("presets", presets); renderSettings(); } });
     };
-    let timer = null, fired = false, sx = 0, sy = 0;
-    const stop = () => { clearTimeout(timer); b.classList.remove("holding"); };
+    let timer = null, show = null, fired = false, sx = 0, sy = 0;
+    const stop = () => { clearTimeout(timer); clearTimeout(show); b.classList.remove("holding"); };
     b.addEventListener("pointerdown", e => {
       if (e.button > 0) return;
-      fired = false; sx = e.clientX; sy = e.clientY; b.classList.add("holding");
+      fired = false; sx = e.clientX; sy = e.clientY;
+      show = setTimeout(() => b.classList.add("holding"), CONFIG.holdShowMs);   /* a quick tap never shows the fill */
       timer = setTimeout(() => { fired = true; b.classList.remove("holding"); buzz(30); ask(); }, 600);
     });
     b.addEventListener("pointermove", e => { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 8) stop(); });
@@ -721,7 +732,7 @@ function setRing(left, total, ready) {
 function beginReady() {
   stopTimer();
   let n = CONFIG.getReadySeconds;
-  say("ready"); show("s-ready"); setRing(n, n, true);
+  say("ready"); show("s-ready"); layoutReady(); setRing(n, n, true);
   timer = setInterval(() => {
     n--;
     if (n <= 0) { stopTimer(); startPlay(); } else setRing(n, CONFIG.getReadySeconds, true);
@@ -763,15 +774,14 @@ function startPlay() {
 /* The board is always a full rectangle (columns × rows = card count, every card the same size).
    The card total is even, so at least one of columns or rows is always even.
    Among all rectangles, pick the one that gives the largest cards in the space left on screen. */
-function layoutBoard() {
-  if (!g) return;
-  const gap = CONFIG.cardGap, n = g.deck.length, pad = 6;
+function boardSize(n) {
+  const gap = CONFIG.cardGap, pad = 6;
   /* some pair counts may use the side margins (keeping 4px from the screen edge) for bigger cards */
   const extra = CONFIG.wideBoardPairs.includes(n / 2) ? Math.max(0, Math.min(12, (window.innerWidth - $("app").clientWidth) / 2 - 4)) : 0;
   const W = $("app").clientWidth - pad + 2 * extra;
   const mainTop = document.querySelector("main").getBoundingClientRect().top;
   const hudTop = $("hud").getBoundingClientRect().top;
-  if ($("hud").hidden) return;
+  if ($("hud").hidden) return null;
   /* the board may fill the stage down to a small gap above the timer bar (main has 4px padding top and bottom) */
   const padB = parseFloat(getComputedStyle($("app")).paddingBottom) || 0;   /* room the page keeps free for the bar */
   const H = Math.max(160, Math.min(hudTop - mainTop - 8 - 12, window.innerHeight - padB - mainTop - 8 - 6));
@@ -782,13 +792,27 @@ function layoutBoard() {
     const size = Math.min((W - (c - 1) * gap) / c, (H - (r - 1) * gap) / r, CONFIG.maxCard);
     if (!best || size > best.size + 0.5) best = { c, r, size };
   }
-  const s = Math.floor(best.size);
-  const board = $("board");
-  board.style.gridTemplateColumns = "repeat(" + best.c + ", " + s + "px)";
-  board.style.marginInline = extra ? "0" : "";   /* auto margins would pin a board wider than the column to the left */
-  board.style.setProperty("--cs", s + "px");
+  return { c: best.c, r: best.r, s: Math.floor(best.size), extra };
 }
-window.addEventListener("resize", layoutBoard);
+function layoutBoard() {
+  if (!g) return;
+  const m = boardSize(g.deck.length);
+  if (!m) return;
+  const board = $("board");
+  board.style.gridTemplateColumns = "repeat(" + m.c + ", " + m.s + "px)";
+  board.style.marginInline = m.extra ? "0" : "";   /* auto margins would pin a board wider than the column to the left */
+  board.style.setProperty("--cs", m.s + "px");
+}
+/* countdown screen: a frame the size of the board, so the player sees where the cards will appear */
+function layoutReady() {
+  const m = boardSize(settings.pairs * 2);
+  if (!m) return;
+  const f = $("readyFrame"), gap = CONFIG.cardGap;
+  f.style.width = (m.c * m.s + (m.c - 1) * gap + 6) + "px";    /* + the board's 3px padding on each side */
+  f.style.height = (m.r * m.s + (m.r - 1) * gap + 6) + "px";
+  f.style.marginInline = m.extra ? "0" : "";
+}
+window.addEventListener("resize", () => { layoutBoard(); if (!$("s-ready").hidden) layoutReady(); });
 
 function flip(n, el) {
   if (!g || g.over || g.locked || el.classList.contains("up")) return;
@@ -864,12 +888,13 @@ $("homeSetBtn").onclick = toIntro;            // Home on the settings screen: ba
 $("newBtn").onclick = toSettings;            // Home: back to the settings screen
 /* Home during a game: tap = leave to the settings, hold = restart the game with the same settings */
 (() => {
-  const btn = $("leaveBtn"); let timer = null, fired = false, sx = 0, sy = 0;
-  const stop = () => { clearTimeout(timer); btn.classList.remove("holding"); };
+  const btn = $("leaveBtn"); let timer = null, show = null, fired = false, sx = 0, sy = 0;
+  const stop = () => { clearTimeout(timer); clearTimeout(show); btn.classList.remove("holding"); };
   btn.addEventListener("pointerdown", e => {
     if (btn.disabled || e.button > 0) return;
     try { btn.setPointerCapture(e.pointerId); } catch (_) {}   /* the finger may drift off the button without ending the hold */
-    fired = false; sx = e.clientX; sy = e.clientY; btn.classList.add("holding");
+    fired = false; sx = e.clientX; sy = e.clientY;
+    show = setTimeout(() => btn.classList.add("holding"), CONFIG.holdShowMs);   /* a quick tap never shows the fill */
     timer = setTimeout(() => {
       fired = true; btn.classList.remove("holding");
       buzz(30);
