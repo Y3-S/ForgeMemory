@@ -581,7 +581,14 @@ function pairsOk(v, dir = 1) {
 const sane = s => ({ pairs: pairsOk(s && s.pairs), seconds: clamp(s && s.seconds, L.secMin, L.secMax), locked: !!(s && s.locked) });
 /* vibration: on by default, can be switched off in the Skin window */
 let vibOn = store.get("vibration", true) !== false;
-function buzz(p) { if (vibOn && navigator.vibrate) try { navigator.vibrate(p); } catch (_) {} }
+/* the Android app offers AndroidVibe (native); in a browser fall back to navigator.vibrate */
+function buzz(p) {
+  if (!vibOn) return;
+  try {
+    if (window.AndroidVibe) window.AndroidVibe.vibrate(Array.isArray(p) ? p[0] : p);
+    else if (navigator.vibrate) navigator.vibrate(p);
+  } catch (_) {}
+}
 let settings = sane(store.get("settings", CONFIG.defaultSettings));
 const sortLocked = () => presets.sort((a, b) => (b.locked ? 1 : 0) - (a.locked ? 1 : 0));   /* locked presets first (stable) */
 let presets = (store.get("presets", CONFIG.defaultPresets) || []).map(sane)
