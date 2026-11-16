@@ -277,6 +277,8 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
 @keyframes nudgeL { 0%, 100% { translate: 0 0; } 50% { translate: -6px 0; } }
 @media (prefers-reduced-motion: reduce) { .scr .more .tri, .pr-more .tri { animation: none !important; } }
 </style>
+</head>
+<body>
 
 <div id="app">
   <header id="hdr"><h1>FORGE MEMORY</h1><button id="skinBtn" class="alt" type="button" aria-label="Choose skin" title="Skin"></button></header>
@@ -939,7 +941,7 @@ function finish(won) {
     $("resTitle").textContent = won ? "VICTORY" : "DEFEAT";
     $("resTitle").className = "result " + (won ? "win" : "lose");
     $("resCards").textContent = (g.found / 2) + "/" + (g.deck.length / 2);
-    $("resTime").textContent = won ? secs.toFixed(1) + " s" : (g.total + 1) + " s";
+    $("resTime").textContent = won ? secs.toFixed(1) + " s" : g.total + " s";
     $("recNote").textContent = note;
     $("rwrap").hidden = !won; $("rwrap").classList.toggle("won", won); $("rname").textContent = "";
     if (won) {
