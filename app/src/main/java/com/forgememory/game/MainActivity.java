@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
         s.setMediaPlaybackRequiresUserGesture(true);
         web.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         web.addJavascriptInterface(new Vibe(), "AndroidVibe");
+        web.setOnLongClickListener(v -> true);  // consumes the system long press (image menu/drag) that cancels the hold on Home
         web.setLongClickable(false);
         web.setHapticFeedbackEnabled(false);
         web.setWebViewClient(new WebViewClient() {
