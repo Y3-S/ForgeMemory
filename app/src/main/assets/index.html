@@ -94,6 +94,7 @@ img.lockbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 1
 .hud .leave.holding { animation: holdgo .4s linear forwards; }
 @keyframes holdgo { from { box-shadow: inset 0 0 0 0 rgba(255,255,255,.5); } to { box-shadow: inset 0 -60px 0 0 rgba(255,255,255,.5); } }
 .hud .leave { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.hud .leave img { pointer-events: none; -webkit-user-drag: none; }
 .preset .pbtn.holding { animation: hold .4s linear forwards; }
 @keyframes hold { from { box-shadow: inset 0 0 0 0 #8e2119; } to { box-shadow: inset 0 -90px 0 0 #8e2119; } }
 .preset .pbtn { font-variant-numeric: lining-nums; display: flex; flex-direction: column; align-items: center; min-width: 56px; font-size: 1.3rem; }
@@ -277,6 +278,8 @@ button.dk.on { border-color: var(--pick); } button.dk.on .n::after { content: " 
 @keyframes nudgeL { 0%, 100% { translate: 0 0; } 50% { translate: -6px 0; } }
 @media (prefers-reduced-motion: reduce) { .scr .more .tri, .pr-more .tri { animation: none !important; } }
 </style>
+</head>
+<body>
 
 <div id="app">
   <header id="hdr"><h1>FORGE MEMORY</h1><button id="skinBtn" class="alt" type="button" aria-label="Choose skin" title="Skin"></button></header>
@@ -939,7 +942,7 @@ function finish(won) {
     $("resTitle").textContent = won ? "VICTORY" : "DEFEAT";
     $("resTitle").className = "result " + (won ? "win" : "lose");
     $("resCards").textContent = (g.found / 2) + "/" + (g.deck.length / 2);
-    $("resTime").textContent = won ? secs.toFixed(1) + " s" : (g.total + 1) + " s";
+    $("resTime").textContent = won ? secs.toFixed(1) + " s" : g.total + " s";
     $("recNote").textContent = note;
     $("rwrap").hidden = !won; $("rwrap").classList.toggle("won", won); $("rname").textContent = "";
     if (won) {
@@ -961,6 +964,9 @@ $("newBtn").onclick = toSettings;            // Home: back to the settings scree
 /* Home during a game: tap = leave to the settings, hold = restart the game with the same settings */
 (() => {
   const btn = $("leaveBtn"); let timer = null, show = null, fired = false, sx = 0, sy = 0;
+  const ico = btn.querySelector("img"); if (ico) ico.setAttribute("draggable", "false");   /* no system image drag/menu on long press */
+  btn.addEventListener("selectstart", e => e.preventDefault());
+  btn.addEventListener("dragstart", e => e.preventDefault());
   const stop = () => { clearTimeout(timer); clearTimeout(show); btn.classList.remove("holding"); };
   btn.addEventListener("pointerdown", e => {
     if (btn.disabled || e.button > 0) return;
