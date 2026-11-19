@@ -12,7 +12,7 @@
    Pixel-art look: hard edges, stepped bevels. Single dark look: a forge at night.
    Sections: 1 Fonts and theme · 2 Base · 3 Layout · 4 Buttons · 5 Bottom bar and timer
              6 Settings · 7 Scrolling rows · 8 Dialogs · 9 Board · 10 Results and records
-             11 Skins and decks · 12 Reduced motion
+             11 Themes and decks · 12 Reduced motion
    =================================================================== */
 
 /* ---------- 1. Fonts and theme ---------- */
@@ -21,7 +21,7 @@
 @font-face { font-family: "Grenze"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/grenze-600.woff2") format("woff2"); }
 @font-face { font-family: "Grenze"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/grenze-700.woff2") format("woff2"); }
 
-/* The skins (see SKINS in the script) overwrite these variables on <html>. */
+/* The themes (see SKINS in the script) overwrite these variables on <html>. */
 :root {
   --bg: #17141a;
   --panel: #221e27;
@@ -129,6 +129,11 @@ button.leave { background: var(--leave); color: #08241d; }
   background: var(--bg); box-shadow: inset 0 4px 0 var(--line);
 }
 .bar.hud { justify-content: flex-start; box-shadow: none; }
+/* the three buttons share one width, the same on every screen: sizeBar() in the script measures the widest */
+.bar-row { display: inline-grid; grid-auto-flow: column; grid-auto-columns: var(--bar-w, 1fr); gap: 14px; }
+/* the three menu buttons are all 96 px wide (they only shrink on a very narrow screen, so they never overflow) */
+nav.bar > .ib { flex: 0 1 96px; width: 96px; }
+@media (max-width: 360px) { nav.bar { gap: 8px; padding-inline: 8px; } }
 .timer { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; }
 .tnum { flex: none; min-width: 68px; margin: 3px; padding: 9px 8px 7px; text-align: center; font-size: 1.9rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums;
   background: var(--panel); box-shadow: 0 0 0 3px var(--ink), inset 0 0 0 3px var(--edge); }
@@ -170,7 +175,7 @@ button.leave { background: var(--leave); color: #08241d; }
 .preset.on .pbtn { color: #fff; background: var(--btn); }
 .lockbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; pointer-events: none; }
 
-/* ---------- 7. Rows that scroll sideways (presets, skins, decks) ---------- */
+/* ---------- 7. Rows that scroll sideways (presets, themes, decks) ---------- */
 .hscroll {
   min-width: 0; max-width: 100%; display: flex; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
   scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
@@ -275,7 +280,7 @@ body[data-deck="metals"] .front { padding: 4%; box-shadow: 0 0 0 1.5px var(--lin
 .rec-row .t { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .rec-row.none .t { font-weight: 500; color: var(--muted); }
 
-/* ---------- 11. Skin dialog: skins, decks, options ---------- */
+/* ---------- 11. Themes dialog: themes, decks, options ---------- */
 #skinGrid, #deckList { margin: 0 -4px 6px; padding: 4px 4px 12px; scroll-padding-inline: 4px; text-align: center; }
 #skinGrid { gap: 8px; }
 #deckList { gap: 10px; }
@@ -319,7 +324,7 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
 <div id="app">
   <header id="header">
     <h1>FORGE MEMORY</h1>
-    <button id="skinBtn" class="alt" type="button" aria-label="Skin, deck and options" title="Skin"></button>
+    <button id="skinBtn" class="alt" type="button" aria-label="Themes, deck and options" title="Themes"></button>
   </header>
 
   <div class="forger">
@@ -403,15 +408,17 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
 
   <!-- other screens: three buttons, set by BAR in the script -->
   <nav class="bar" id="bar" hidden>
-    <button id="barL" class="alt ib" type="button"></button>
-    <button id="barM" class="alt ib" type="button"></button>
-    <button id="barR" class="ib" type="button"></button>
+    <div class="bar-row">
+      <button id="barL" class="alt ib" type="button"></button>
+      <button id="barM" class="alt ib" type="button"></button>
+      <button id="barR" class="ib" type="button"></button>
+    </div>
   </nav>
 </div>
 
-<div class="dlg" id="skinDlg" hidden role="dialog" aria-modal="true" aria-label="Skin, deck and options">
+<div class="dlg" id="skinDlg" hidden role="dialog" aria-modal="true" aria-label="Themes, deck and options">
   <div class="dlg-box">
-    <h2 class="dlg-title">SKIN</h2>
+    <h2 class="dlg-title">THEMES</h2>
     <div class="scr"><div class="hscroll" id="skinGrid"></div></div>
     <h2 class="dlg-title">DECK</h2>
     <div class="scr"><div class="hscroll" id="deckList"></div></div>
@@ -427,7 +434,7 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
 <div class="dlg" id="bkDlg" hidden role="dialog" aria-modal="true" aria-label="Save data">
   <div class="dlg-box backup">
     <h2 class="dlg-title">SAVE DATA</h2>
-    <p>Copy this code to move your skin, deck, presets and records to another copy of the game.</p>
+    <p>Copy this code to move your theme, deck, presets and records to another copy of the game.</p>
     <textarea id="bkOut" readonly rows="3" spellcheck="false" aria-label="Your code"></textarea>
     <button id="bkCopy" class="alt" type="button">Copy code</button>
     <p>Paste a code here to load it. It replaces the data on this device.</p>
@@ -456,7 +463,7 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
 /* ===================================================================
    FORGE MEMORY: game logic
    Sections: 1 Config · 2 Helpers · 3 Pixel-art icons · 4 Skins and decks · 5 State and rules
-             6 Screens · 7 Settings · 8 Records · 9 Dialogs · 10 Game · 11 Skin dialog · 12 Save data · 13 Start
+             6 Screens · 7 Settings · 8 Records · 9 Dialogs · 10 Game · 11 Themes dialog · 12 Save data · 13 Start
    The sprite images (smith, card back, decks) are in the SPRITES block at the end of this file.
    =================================================================== */
 
@@ -664,8 +671,8 @@ function setButton(btn, icon, label, title = label) {
 }
 
 /* ---------- 4. Skins and decks ---------- */
-/* A skin changes the CSS variables on <html> and tints the card back with `filter`.
-   `card` is only the colour of the swatch in the skin list; `light` switches the page to a light colour scheme. */
+/* A theme changes the CSS variables on <html> and tints the card back with `filter`.
+   `card` is only the colour of the swatch in the theme list; `light` switches the page to a light colour scheme. */
 const SKINS = [
   { id: "classic", name: "Default", filter: "", vars: null },
   { id: "amoled", name: "Amoled", filter: "grayscale(1) brightness(.85)", vars: { bg: "#000000", panel: "#0b0b0d", line: "#2a2a30", edge: "#000000", ink: "#f2f2f4", muted: "#8d8d96", card: "#4a4a56", btn: "#33333d", leave: "#2fd0c0", good: "#4be08a", pick: "#ffd84a", bad: "#ff5a5a", track: "#1a1a1f" } },
@@ -681,7 +688,7 @@ const SKINS = [
   { id: "sakura", name: "Sakura", filter: "hue-rotate(85deg) saturate(1.2)", vars: { bg: "#1d1119", panel: "#2e1a28", line: "#583650", edge: "#0d060a", ink: "#fff0f6", muted: "#c9a0b8", card: "#e0609a", btn: "#cc4a86", leave: "#7be0c8", good: "#8be08a", pick: "#ffe08f", bad: "#ff5a6a" } },
 ];
 const THEME_VARS = ["bg", "panel", "line", "edge", "ink", "muted", "btn", "leave", "good", "pick", "bad", "bubble", "bubble-ink", "track"];
-const DEFAULT_LOOK = { panel: "#221e27", card: "#5a37c9", leave: "#1fbf99", ink: "#f1ece4" };   // the Default skin's swatch
+const DEFAULT_LOOK = { panel: "#221e27", card: "#5a37c9", leave: "#1fbf99", ink: "#f1ece4" };   // the Default theme's swatch
 
 /* Decks are built from SPRITES once the page is ready. pixel: sprites are drawn crisp instead of smooth. */
 let DECKS = [];
@@ -808,6 +815,22 @@ function show(name) {
   if (name === "set") updatePresetArrows();        // sizes are only known once the screen is visible
 }
 function stopClock() { clearInterval(clockTimer); clockTimer = 0; }
+/* The bottom bar buttons share one width on every screen: the widest button of any screen sets it.
+   A hidden row holding all of them measures it (a shrink-to-fit grid gives every column the width of the widest). */
+function sizeBar() {
+  const probe = make("div", "bar-row");
+  probe.style.cssText = "position:fixed;left:0;top:0;width:max-content;visibility:hidden;pointer-events:none";
+  const seen = new Set();
+  Object.values(BAR).flat().forEach(([icon, label]) => {
+    if (seen.has(icon + label)) return;
+    seen.add(icon + label);
+    const btn = make("button", "ib"); setButton(btn, icon, label); probe.appendChild(btn);
+  });
+  document.body.appendChild(probe);
+  const width = probe.firstChild.getBoundingClientRect().width;
+  probe.remove();
+  if (width > 0) $("bar").style.setProperty("--bar-w", width + "px");
+}
 
 const toIntro = () => { say("idle"); show("intro"); };
 const toSettings = () => { say("rules"); renderSettings(); show("set"); };
@@ -923,6 +946,7 @@ function initSettingsControls() {
   updatePresetArrows = addScrollArrows($("presets"));
   /* the font changes the glyph metrics: measure again once it is loaded */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
+    sizeBar();
     document.querySelectorAll(".pr-labels span").forEach(s => centerInk(s, 1.05, 600));
     renderSettings();
   });
@@ -1176,7 +1200,7 @@ function fitResult() {
   }
 }
 
-/* ---------- 11. Skin dialog: skins, decks, options ---------- */
+/* ---------- 11. Themes dialog: themes, decks, options ---------- */
 function initSkinDialog() {
   const dialog = $("skinDlg"), skinGrid = $("skinGrid"), deckList = $("deckList");
 
@@ -1188,7 +1212,7 @@ function initSkinDialog() {
     btn.style.setProperty("--sp", look.panel);
     btn.style.setProperty("--sc", look.card);
     btn.style.setProperty("--sa", look.leave);
-    btn.style.setProperty("--si", look.light ? look.ink : "#fff");   // label colour: white, or the dark ink on a light skin
+    btn.style.setProperty("--si", look.light ? look.ink : "#fff");   // label colour: white, or the dark ink on a light theme
     btn.onclick = () => store.set("skin", applySkin(skin.id));
     skinGrid.appendChild(btn);
   });
@@ -1316,6 +1340,7 @@ function init() {
   $("smithImg").src = SPRITES.smith;
 
   buildDecks();
+  sizeBar();
   initSettingsControls();
   initDialog();
   initSkinDialog();                         // builds the skin and deck tiles...
