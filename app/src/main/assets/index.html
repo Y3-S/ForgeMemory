@@ -530,7 +530,7 @@ const CONFIG = {
     match:   ["Nice one. It won't be enough.", "Hey, slow down. I'm trying to keep up.", "Good eye. I'd have sworn it was elsewhere."],
     win:     ["Fine, you earned it. Take your gear."],
     lose:    ["Out of time. Come back and try again."],
-    loseMoves: ["Out of moves. Come back and try again."]
+    loseMoves: ["Not enough moves left. Come back and try again."]
   }
 };
 const LIMITS = CONFIG.limits;
@@ -1175,7 +1175,8 @@ function startPlay() {
   });
 }
 
-const outOfMoves = g => g.s.mode === "moves" && g.moves >= g.s.moves;
+/* Moves mode: the game is lost as soon as the moves left cannot cover the pairs still to find (each pair needs at least one move, the last one too) */
+const outOfMoves = g => g.s.mode === "moves" && g.s.moves - g.moves < g.deck.length / 2 - g.found / 2;
 
 function flip(i, el) {
   const g = game;
