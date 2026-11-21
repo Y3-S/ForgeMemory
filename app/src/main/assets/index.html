@@ -140,13 +140,15 @@ nav.bar > .ib { flex: 0 1 96px; width: 96px; }
 .tbar { flex: 1; min-width: 0; height: 14px; background: var(--track); box-shadow: 0 0 0 3px var(--line); }
 .tbar i { display: block; width: 100%; height: 100%; background: repeating-linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 10px); }
 .timer.run .tbar i { transition: width 1s linear; }
+.timer.moves .tbar i { transition: width .2s linear; }
+.tnum small { display: block; margin-top: 3px; font-size: .6rem; font-weight: 600; letter-spacing: .08em; line-height: 1; text-transform: uppercase; color: var(--muted); }
+.tnum small:empty { display: none; }
 .timer.low .tnum, .timer.ready .tnum { color: var(--bad); box-shadow: 0 0 0 3px var(--bad), inset 0 0 0 3px var(--edge); }
 .timer.low .tbar i, .timer.ready .tbar i { background: repeating-linear-gradient(90deg, var(--bad) 0 8px, transparent 8px 10px); }
 
 /* ---------- 6. Settings screen ---------- */
 .set-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; }
 .set-row .lab { font-weight: 700; line-height: 1.1; }
-.set-row .lab small { display: block; margin-top: 2px; font-size: .95rem; font-weight: 500; color: var(--muted); }
 .stepper { display: flex; align-items: center; gap: 6px; }
 .stepper button { width: 44px; min-width: 0; padding: 8px 0; font-size: 1.6rem; line-height: 1; }
 .stepper input {
@@ -155,23 +157,37 @@ nav.bar > .ib { flex: 0 1 96px; width: 96px; }
   box-shadow: 0 0 0 3px var(--line); -moz-appearance: textfield;
 }
 .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.hint { margin: 0; min-height: 1.3em; font-size: 1rem; line-height: 1.2; color: var(--pick); }
+.hint { margin: 0; font-size: 1rem; line-height: 1.2; color: var(--pick); }
+.hint:empty { display: none; }
+.set-row.ghost { visibility: hidden; }
+.hint.tip { color: var(--muted); }
+.hint.note { margin-top: 6px; min-height: 1.2em; }
+.hint.note:empty { display: block; }
+@media (max-height: 660px) { #s-set { gap: 4px; } .hint.note { margin-top: 2px; } .pbtn { padding-top: 5px; padding-bottom: 5px; } }
+#s-set { gap: 6px; }                     /* compact on purpose: the three-row Moves layout has to fit a short phone */
+.toprow { width: 100%; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.toprow .big { text-align: left; white-space: nowrap; }
+@media (max-width: 380px) { .toprow .big { font-size: 1.5rem; } }
+/* the two-way mode switch (Timed | Moves), on the settings and records screens */
+.seg { flex: none; display: flex; }
+.seg button { flex: none; min-width: 0; margin: 3px; padding: 6px 12px; font-size: 1rem; color: rgba(255,255,255,.65); background: #3b3445; }
+.seg button.on { color: #fff; background: var(--btn); }
+#s-set .stepper button { width: 40px; padding: 5px 0; }
+#s-set .stepper input { width: 70px; padding: 4px 2px; font-size: 1.5rem; }
 
-.presets-wrap { width: 100%; padding-top: 14px; display: flex; flex-direction: column; align-items: stretch; gap: 10px; text-align: left; border-top: 4px solid var(--line); }
-.pr-head { margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.presets-wrap { width: 100%; margin-top: 10px; padding-top: 14px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; text-align: left; border-top: 4px solid var(--line); }
+.pr-head { margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pr-head h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+.pr-head h2 small { margin-left: 10px; font-size: .85rem; font-weight: 400; color: var(--muted); }
+@media (max-height: 660px) { .presets-wrap { margin-top: 2px; padding-top: 9px; } .toprow { margin-bottom: 2px; } }
 .pr-head button { min-width: 0; padding: 5px 12px; font-size: .95rem; line-height: 1.2; }
-.pr-tip { margin: 0; font-size: 1rem; text-align: center; color: var(--muted); }
-.pr-row { display: flex; align-items: stretch; gap: 12px; }
-.pr-labels { flex: none; margin-bottom: 10px; padding: 15px 12px 0 0; display: flex; flex-direction: column; font-size: 1.05rem; font-weight: 600; line-height: 1.6rem; color: var(--muted); border-right: 3px solid var(--line); }
-.pr-labels span, .pbtn span { display: block; height: 1.6rem; line-height: 1.6rem; }
-.sep { display: block; align-self: stretch; height: 2px; background: rgba(255,255,255,.35); }
-.pr-labels .sep { visibility: hidden; }
-.scr.pr-scroll { flex: 1; min-width: 0; --fade: var(--bg); --more-bottom: 10px; --more-w: 54px; --more-shift: 0px; --tri-gap: 4px; --fade-stop: 70%; }
-#presets { gap: 12px; padding: 0 0 10px; }
+.pbtn span { line-height: 1.3; }
+.sep { display: block; flex: none; align-self: center; width: 2px; height: 1em; background: rgba(255,255,255,.35); }
+.scr.pr-scroll { min-width: 0; --fade: var(--bg); --more-bottom: 6px; --more-w: 54px; --more-shift: 0px; --tri-gap: 4px; --fade-stop: 70%; }
+#presets { gap: 10px; padding: 0 0 6px; }
 .empty { margin: 0; color: var(--muted); }
 .preset { position: relative; flex: none; display: flex; align-items: stretch; white-space: nowrap; scroll-snap-align: start; }
-.pbtn { min-width: 0; padding: 12px 14px; display: flex; flex-direction: column; align-items: center; font-size: 1.3rem; font-weight: 600; font-variant-numeric: lining-nums; color: var(--ink); background: var(--panel); }
+.pbtn { min-width: 0; padding: 8px 12px; display: flex; flex-direction: row; align-items: center; gap: 6px; font-size: 1.15rem; font-weight: 600; font-variant-numeric: lining-nums; color: var(--ink); background: var(--panel); }
 .preset.on .pbtn { color: #fff; background: var(--btn); }
 .lockbadge { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; pointer-events: none; }
 
@@ -338,37 +354,54 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
     </section>
 
     <section class="screen" id="s-set" hidden>
-      <p class="big">NEW GAME</p>
+      <div class="toprow">
+        <p class="big">NEW GAME</p>
+        <div class="seg" role="group" aria-label="Game mode"><button type="button" data-mode="time">Timed</button><button type="button" data-mode="moves">Moves</button></div>
+      </div>
       <div class="set-row">
-        <div class="lab">Cards<small id="cardsNote"></small></div>
+        <div class="lab">Cards</div>
         <div class="stepper">
           <button id="pMinus" class="alt" type="button" aria-label="Fewer cards">&minus;</button>
           <input id="pairsIn" type="number" inputmode="numeric" min="6" max="24" step="1" aria-label="Number of cards">
           <button id="pPlus" class="alt" type="button" aria-label="More cards">+</button>
         </div>
       </div>
-      <div class="set-row">
-        <div class="lab">Time limit<small>seconds</small></div>
+      <div class="set-row" id="rowTime">
+        <div class="lab">Time limit (s)</div>
         <div class="stepper">
           <button id="tMinus" class="alt" type="button" aria-label="Less time">&minus;</button>
           <input id="timeIn" type="number" inputmode="numeric" min="10" max="300" step="5" aria-label="Time limit in seconds">
           <button id="tPlus" class="alt" type="button" aria-label="More time">+</button>
         </div>
       </div>
-      <p class="hint" id="hint"></p>
-      <div class="presets-wrap">
-        <div class="pr-head"><h2>Presets</h2><button id="saveBtn" class="alt" type="button">Save as preset</button></div>
-        <div class="pr-row">
-          <div class="pr-labels" aria-hidden="true"><span>Cards</span><i class="sep"></i><span>Seconds</span></div>
-          <div class="scr pr-scroll"><div class="hscroll" id="presets"></div></div>
+      <div class="set-row" id="rowPeek" hidden>
+        <div class="lab">Peek time (s)</div>
+        <div class="stepper">
+          <button id="peMinus" class="alt" type="button" aria-label="Shorter peek">&minus;</button>
+          <input id="peekIn" type="number" inputmode="decimal" min="0.5" max="30" step="0.5" aria-label="Peek time in seconds">
+          <button id="pePlus" class="alt" type="button" aria-label="Longer peek">+</button>
         </div>
-        <p class="pr-tip">Hold a preset to delete or lock it.</p>
       </div>
+      <div class="set-row" id="rowMoves">
+        <div class="lab">Max moves</div>
+        <div class="stepper">
+          <button id="moMinus" class="alt" type="button" aria-label="Fewer moves">&minus;</button>
+          <input id="movesIn" type="number" inputmode="numeric" step="1" aria-label="Maximum number of moves">
+          <button id="moPlus" class="alt" type="button" aria-label="More moves">+</button>
+        </div>
+      </div>
+      <div class="presets-wrap">
+        <div class="pr-head"><h2>Presets <small id="prCap"></small></h2><button id="saveBtn" class="alt" type="button">Save as preset</button></div>
+        <div class="scr pr-scroll"><div class="hscroll" id="presets"></div></div>
+      </div>
+      <p class="hint tip">Hold a preset to delete or lock it</p>
+      <p class="hint note" id="hint"></p>
     </section>
 
     <section class="screen" id="s-rec" hidden>
       <p class="big">RECORDS</p>
-      <p class="sub">Fastest win for each number of cards.</p>
+      <div class="seg" role="group" aria-label="Game mode"><button type="button" data-mode="time">Timed</button><button type="button" data-mode="moves">Moves</button></div>
+      <p class="sub" id="recSub"></p>
       <div class="rec-list" id="recList"></div>
     </section>
 
@@ -390,7 +423,7 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
         <p class="rname" id="rname"></p>
         <div class="stats">
           <div><b id="resCards"></b><span>Cards</span></div>
-          <div><b id="resTime"></b><span>Time</span></div>
+          <div><b id="resTime"></b><span id="resLab">Time</span></div>
         </div>
         <p class="recnote" id="recNote"></p>
       </div>
@@ -400,7 +433,7 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
   <!-- during a game: timer and Home -->
   <div class="bar hud" id="hud" hidden>
     <div class="timer" id="timer">
-      <div class="tnum" id="count"></div>
+      <div class="tnum"><span id="count"></span><small id="countLab"></small></div>
       <div class="tbar"><i id="bar-fill"></i></div>
     </div>
     <button id="leaveBtn" class="leave ib holdable" type="button"></button>
@@ -469,9 +502,9 @@ button.dk { width: 100%; min-width: 0; padding: 8px 6px; display: flex; flex-dir
 
 /* ---------- 1. Config ---------- */
 const CONFIG = {
-  limits: { pairsMin: 6, pairsMax: 24, secMin: 10, secMax: 300, secStep: 5 },
-  defaults: { pairs: 8, seconds: 40 },
-  defaultPresets: [{ pairs: 8, seconds: 40 }, { pairs: 12, seconds: 45 }],
+  limits: { pairsMin: 6, pairsMax: 24, secMin: 10, secMax: 300, secStep: 5, peekMin: 0.5, peekMax: 30, peekStep: 0.5, peekStepBig: 1, peekBigFrom: 5, movesFactor: 5 },   // Moves mode: from one move per pair up to 5 per pair; peek steps of 0.5 s up to 5 s, then 1 s
+  defaults: { mode: "time", pairs: 8, seconds: 40, peek: 1, moves: 16 },
+  defaultPresets: [{ pairs: 8, seconds: 40 }, { pairs: 12, seconds: 45 }, { mode: "moves", pairs: 8, peek: 1, moves: 16 }, { mode: "moves", pairs: 12, peek: 1.5, moves: 30 }],
   countdownSeconds: 3,     // 3, 2, 1 before the board appears
   peekMs: 500,             // all cards face up at the start of a game
   flipMs: 200,             // one card flip
@@ -488,13 +521,16 @@ const CONFIG = {
   lines: {
     idle:    ["Could use a break. Care for a game?"],
     rules:   ["How many cards, and how long do you need? Set it up."],
+    rulesMoves: ["How many cards, how long to peek, and how many moves? Set it up."],
     records: ["These are the times to beat."],
+    recordsMoves: ["These are the move counts to beat."],
     ready:   ["Get ready..."],
     start:   ["Let's go. Show me what you remember."],
     miss:    ["Nope. Cards have to match.", "Not there. Think it over.", "Careful now. Think before you pick."],
     match:   ["Nice one. It won't be enough.", "Hey, slow down. I'm trying to keep up.", "Good eye. I'd have sworn it was elsewhere."],
     win:     ["Fine, you earned it. Take your gear."],
-    lose:    ["Out of time. Come back and try again."]
+    lose:    ["Out of time. Come back and try again."],
+    loseMoves: ["Out of moves. Come back and try again."]
   }
 };
 const LIMITS = CONFIG.limits;
@@ -686,6 +722,7 @@ const SKINS = [
   { id: "cyber", name: "Cyberpunk", filter: "hue-rotate(62deg) saturate(1.7) brightness(1.1)", vars: { bg: "#0b0618", panel: "#150b2b", line: "#3a1d6e", edge: "#04020c", ink: "#e6fbff", muted: "#8fa8d9", card: "#e0189b", btn: "#c20f85", leave: "#00e5ff", good: "#39ff88", pick: "#fff23a", bad: "#ff3355" } },
   { id: "abyss", name: "Abyss", filter: "hue-rotate(-72deg) saturate(1.1)", vars: { bg: "#06161c", panel: "#0d2630", line: "#1c4a58", edge: "#030c10", ink: "#e0fbff", muted: "#86b8c4", card: "#17a2b8", btn: "#118ca0", leave: "#ff8c6a", good: "#5cf0b0", pick: "#ffe08a", bad: "#ff6b6b" } },
   { id: "sakura", name: "Sakura", filter: "hue-rotate(85deg) saturate(1.2)", vars: { bg: "#1d1119", panel: "#2e1a28", line: "#583650", edge: "#0d060a", ink: "#fff0f6", muted: "#c9a0b8", card: "#e0609a", btn: "#cc4a86", leave: "#7be0c8", good: "#8be08a", pick: "#ffe08f", bad: "#ff5a6a" } },
+  { id: "plum", name: "Plum", filter: "hue-rotate(62deg) saturate(.7) brightness(.8)", vars: { bg: "#1b0c15", panel: "#2b1322", line: "#5c2b45", edge: "#0c0509", ink: "#fff1e8", muted: "#c9a3ad", card: "#7e2553", btn: "#7e2553", leave: "#ab5236", good: "#5fd07a", pick: "#ffa300", bad: "#ff5148" } },
 ];
 const THEME_VARS = ["bg", "panel", "line", "edge", "ink", "muted", "btn", "leave", "good", "pick", "bad", "bubble", "bubble-ink", "track"];
 const DEFAULT_LOOK = { panel: "#221e27", card: "#5a37c9", leave: "#1fbf99", ink: "#f1ece4" };   // the Default theme's swatch
@@ -769,13 +806,28 @@ function validPairs(value, direction = 1) {
   while (isBlocked(n)) n += direction;
   return clamp(n, LIMITS.pairsMin, LIMITS.pairsMax);
 }
-const cleanSettings = s => ({ pairs: validPairs(s && s.pairs), seconds: clamp(s && s.seconds, LIMITS.secMin, LIMITS.secMax) });
-const cleanPreset = s => ({ ...cleanSettings(s), locked: !!(s && s.locked) });
-const same = (a, b) => a.pairs === b.pairs && a.seconds === b.seconds;
+const modeOf = s => (s && s.mode === "moves" ? "moves" : "time");
+const cleanPeek = v => {
+  const n = Number(v);
+  return Math.min(LIMITS.peekMax, Math.max(LIMITS.peekMin, Math.round((v != null && v !== "" && isFinite(n) ? n : 1) * 2) / 2));
+};
+const cleanMoves = (v, pairs) => clamp(+v || pairs * 2, pairs, pairs * LIMITS.movesFactor);   // at least one move per pair
+const cleanSettings = s => {
+  const pairs = validPairs(s && s.pairs);
+  return { mode: modeOf(s), pairs, seconds: clamp(s && s.seconds, LIMITS.secMin, LIMITS.secMax), peek: cleanPeek(s && s.peek), moves: cleanMoves(s && s.moves, pairs) };
+};
+/* a time preset keeps its original shape ({pairs, seconds}), so codes from older versions still load */
+const cleanPreset = s => {
+  const c = cleanSettings(s), locked = !!(s && s.locked);
+  return c.mode === "moves" ? { mode: "moves", pairs: c.pairs, peek: c.peek, moves: c.moves, locked } : { pairs: c.pairs, seconds: c.seconds, locked };
+};
+const presetOf = s => (modeOf(s) === "moves" ? { mode: "moves", pairs: s.pairs, peek: s.peek, moves: s.moves } : { pairs: s.pairs, seconds: s.seconds });
+const same = (a, b) => modeOf(a) === modeOf(b) && a.pairs === b.pairs && (modeOf(a) === "moves" ? a.peek === b.peek && a.moves === b.moves : a.seconds === b.seconds);
 
 let settings = cleanSettings(store.get("settings", CONFIG.defaults));
 let presets = (store.get("presets", CONFIG.defaultPresets) || []).map(cleanPreset).filter((p, i, all) => all.findIndex(q => same(p, q)) === i);
-let records = store.get("records", {}) || {};      // { pairs: fastest win in seconds }
+let records = store.get("records", {}) || {};              // Timed: { pairs: fastest win in seconds }
+let recordsMoves = store.get("recordsMoves", {}) || {};    // Moves: { pairs: fewest moves in a win }
 let game = null;                                   // the game in progress (or just finished)
 let clockTimer = 0;
 
@@ -833,22 +885,8 @@ function sizeBar() {
 }
 
 const toIntro = () => { say("idle"); show("intro"); };
-const toSettings = () => { say("rules"); renderSettings(); show("set"); };
-const toRecords = () => { say("records"); show("rec"); renderRecords(); };
-
-/* Centres the glyph ink (not the line box) of a label, so numbers sit at the same distance from the divider with any font. */
-function centerInk(el, rem, weight, sample) {
-  let dy = 0;
-  try {
-    const ctx = centerInk.ctx || (centerInk.ctx = document.createElement("canvas").getContext("2d"));
-    const px = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    ctx.font = weight + " 200px " + getComputedStyle(document.body).fontFamily;   // measured large: canvas metrics are rounded to whole pixels
-    const m = ctx.measureText(sample || el.textContent);
-    const d = ((m.fontBoundingBoxAscent - m.fontBoundingBoxDescent) - (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent)) / 2;
-    if (isFinite(d)) dy = -d * rem * px / 200;
-  } catch (_) {}
-  el.style.transform = "translateY(" + dy.toFixed(2) + "px)";
-}
+const toSettings = () => { say(settings.mode === "moves" ? "rulesMoves" : "rules"); renderSettings(); show("set"); };
+const toRecords = () => { say(settings.mode === "moves" ? "recordsMoves" : "records"); show("rec"); renderRecords(); };
 
 /* Arrows on the edges of a row that scrolls sideways; each hides when there is nothing more in its direction.
    `row` sits inside a .scr wrapper. Returns the function that refreshes the arrows. */
@@ -872,44 +910,85 @@ function addScrollArrows(row) {
 let updatePresetArrows = () => {};   // set in init
 
 /* ---------- 7. Settings and presets ---------- */
+const fmtPeek = v => v.toFixed(1);
+const fmtMoves = n => n + (n === 1 ? " move" : " moves");
+function markMode() {
+  document.querySelectorAll(".seg button").forEach(b => {
+    const on = b.dataset.mode === settings.mode;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on);
+  });
+}
+
 function renderSettings(note) {
+  settings.moves = cleanMoves(settings.moves, settings.pairs);     // never fewer moves than pairs
+  const moves = settings.mode === "moves";
   $("pairsIn").value = settings.pairs;
   $("timeIn").value = settings.seconds;
-  $("cardsNote").textContent = settings.pairs * 2 + " on the board";
+  $("peekIn").value = fmtPeek(settings.peek);
+  $("movesIn").value = settings.moves;
+  $("rowTime").hidden = moves;
+  $("rowPeek").hidden = !moves;
+  $("rowMoves").hidden = false;                     // in Timed it stays as an invisible spacer, so the title and the divider keep their position
+  $("rowMoves").classList.toggle("ghost", !moves);
+  $("rowMoves").setAttribute("aria-hidden", !moves);
+  $("prCap").textContent = moves ? "cards · peek · moves" : "cards · seconds";
   $("hint").textContent = note || "";
   $("pMinus").disabled = settings.pairs <= LIMITS.pairsMin;
   $("pPlus").disabled = settings.pairs >= LIMITS.pairsMax;
   $("tMinus").disabled = settings.seconds <= LIMITS.secMin;
   $("tPlus").disabled = settings.seconds >= LIMITS.secMax;
+  $("peMinus").disabled = settings.peek <= LIMITS.peekMin;
+  $("pePlus").disabled = settings.peek >= LIMITS.peekMax;
+  $("moMinus").disabled = settings.moves <= settings.pairs;
+  $("moPlus").disabled = settings.moves >= settings.pairs * LIMITS.movesFactor;
+  markMode();
   $("saveBtn").disabled = presets.some(p => same(p, settings));
   renderPresets();
 }
 
+/* Switches between Timed and Moves. Each mode has its own presets and records. */
+function setMode(mode) {
+  if (settings.mode === mode) return;
+  settings.mode = mode;
+  store.set("settings", settings);
+  const moves = mode === "moves";
+  if (!$("s-rec").hidden) { say(moves ? "recordsMoves" : "records"); renderRecords(); }
+  else say(moves ? "rulesMoves" : "rules");
+  renderSettings();
+}
+
 function renderPresets() {
   const row = $("presets"), keepX = row.scrollLeft;
+  const list = presets.filter(p => modeOf(p) === settings.mode);
   row.innerHTML = "";
-  if (!presets.length) row.appendChild(make("p", "empty", "No presets yet. Set the values and tap Save as preset."));
-  presets.forEach(p => row.appendChild(presetChip(p)));
+  if (!list.length) row.appendChild(make("p", "empty", "No presets yet. Set the values and tap Save as preset."));
+  list.forEach(p => row.appendChild(presetChip(p)));
   row.scrollLeft = keepX;
   updatePresetArrows();
 }
 
 function presetChip(p) {
+  const moves = modeOf(p) === "moves";
   const chip = make("div", "preset" + (same(p, settings) ? " on" : ""));
-  const btn = make("button", "pbtn", "<span>" + p.pairs + '</span><i class="sep"></i><span>' + p.seconds + "</span>");
+  const parts = moves ? [p.pairs, fmtPeek(p.peek), p.moves] : [p.pairs, p.seconds];
+  const btn = make("button", "pbtn", parts.map(x => "<span>" + x + "</span>").join('<i class="sep"></i>'));
   btn.type = "button";
-  btn.setAttribute("aria-label", p.pairs + " cards, " + p.seconds + " seconds." + (p.locked ? " Locked." : "") + " Hold for options.");
+  btn.setAttribute("aria-label", p.pairs + " cards, " + (moves ? fmtPeek(p.peek) + " seconds peek, " + p.moves + " moves." : p.seconds + " seconds.") + (p.locked ? " Locked." : "") + " Hold for options.");
   const wasHold = onHold(btn, { fire: () => askPreset(p) });
-  btn.onclick = () => { if (!wasHold()) { settings = { pairs: p.pairs, seconds: p.seconds }; renderSettings(); } };
+  btn.onclick = () => {
+    if (wasHold()) return;
+    Object.assign(settings, moves ? { pairs: p.pairs, peek: p.peek, moves: p.moves } : { pairs: p.pairs, seconds: p.seconds });
+    renderSettings();
+  };
   btn.onkeydown = e => { if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); askPreset(p); } };
   chip.appendChild(btn);
   if (p.locked) { const lock = make("img", "px lockbadge"); lock.alt = ""; lock.src = ICON.lock; chip.appendChild(lock); }
-  btn.querySelectorAll("span").forEach(s => centerInk(s, 1.3, 600, "0123456789"));   // same shift on every chip, so they line up
   return chip;
 }
 
 function askPreset(p) {
-  const title = p.pairs + " cards · " + p.seconds + " s";
+  const title = modeOf(p) === "moves" ? p.pairs + " cards · " + fmtPeek(p.peek) + " s peek · " + p.moves + " moves" : p.pairs + " cards · " + p.seconds + " s";
   const toggleLock = () => { p.locked = !p.locked; sortPresets(); savePresets(); renderSettings(); };
   if (p.locked) {
     openDialog({ title, text: "This preset is locked. Unlock it before you can delete it.", icon: "lock",
@@ -922,7 +1001,8 @@ function askPreset(p) {
 }
 
 function startFromSettings() {
-  settings = cleanSettings({ pairs: $("pairsIn").value, seconds: $("timeIn").value });   // also takes a value typed but not confirmed
+  /* also takes a value typed but not confirmed */
+  settings = cleanSettings({ mode: settings.mode, pairs: $("pairsIn").value, seconds: $("timeIn").value, peek: $("peekIn").value, moves: $("movesIn").value });
   store.set("settings", settings);
   beginReady();
 }
@@ -932,14 +1012,21 @@ function initSettingsControls() {
   $("pPlus").onclick = () => { settings.pairs = validPairs(settings.pairs + 1, 1); renderSettings(); };
   $("tMinus").onclick = () => { settings.seconds = clamp(settings.seconds - LIMITS.secStep, LIMITS.secMin, LIMITS.secMax); renderSettings(); };
   $("tPlus").onclick = () => { settings.seconds = clamp(settings.seconds + LIMITS.secStep, LIMITS.secMin, LIMITS.secMax); renderSettings(); };
+  $("peMinus").onclick = () => { settings.peek = cleanPeek(settings.peek - (settings.peek > LIMITS.peekBigFrom ? LIMITS.peekStepBig : LIMITS.peekStep)); renderSettings(); };
+  $("pePlus").onclick = () => { settings.peek = cleanPeek(settings.peek + (settings.peek >= LIMITS.peekBigFrom ? LIMITS.peekStepBig : LIMITS.peekStep)); renderSettings(); };
+  $("moMinus").onclick = () => { settings.moves = cleanMoves(settings.moves - 1, settings.pairs); renderSettings(); };
+  $("moPlus").onclick = () => { settings.moves = cleanMoves(settings.moves + 1, settings.pairs); renderSettings(); };
   $("pairsIn").onchange = e => {
     const asked = clamp(e.target.value, LIMITS.pairsMin, LIMITS.pairsMax);
     settings.pairs = validPairs(asked);
     renderSettings(asked !== settings.pairs ? asked + " cards are not available. Using " + settings.pairs + " instead." : "");
   };
   $("timeIn").onchange = e => { settings.seconds = clamp(e.target.value, LIMITS.secMin, LIMITS.secMax); renderSettings(); };
+  $("peekIn").onchange = e => { settings.peek = cleanPeek(e.target.value); renderSettings(); };
+  $("movesIn").onchange = e => { settings.moves = cleanMoves(e.target.value, settings.pairs); renderSettings(); };
+  document.querySelectorAll(".seg button").forEach(b => { b.onclick = () => setMode(b.dataset.mode); });
   $("saveBtn").onclick = () => {
-    if (!presets.some(p => same(p, settings))) { presets.push({ ...settings, locked: false }); savePresets(); }
+    if (!presets.some(p => same(p, settings))) { presets.push({ ...presetOf(settings), locked: false }); savePresets(); }
     renderSettings();
   };
   $("playBtn").onclick = toSettings;
@@ -947,26 +1034,35 @@ function initSettingsControls() {
   /* the font changes the glyph metrics: measure again once it is loaded */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
     sizeBar();
-    document.querySelectorAll(".pr-labels span").forEach(s => centerInk(s, 1.05, 600));
     renderSettings();
   });
 }
 
 /* ---------- 8. Records ---------- */
 function renderRecords() {
+  const moves = settings.mode === "moves", book = moves ? recordsMoves : records;
+  $("recSub").textContent = moves ? "Fewest moves for each number of cards." : "Fastest win for each number of cards.";
+  markMode();
   const list = $("recList");
   list.innerHTML = "";
   for (let n = LIMITS.pairsMin; n <= LIMITS.pairsMax; n++) {
     if (isBlocked(n)) continue;
-    const t = records[n] > 0 ? records[n] : null;
+    const t = book[n] > 0 ? book[n] : null;
     list.appendChild(make("div", "rec-row" + (t === null ? " none" : ""),
-      "<div class='n'>" + n + " cards<small>" + n * 2 + " on the board</small></div><div class='t'>" + (t === null ? "—" : fmtTime(t)) + "</div>"));
+      "<div class='n'>" + n + " cards<small>" + n * 2 + " on the board</small></div><div class='t'>" + (t === null ? "—" : moves ? fmtMoves(t) : fmtTime(t)) + "</div>"));
   }
-  $("barL").disabled = !Object.keys(records).length;     // the Clear button
+  $("barL").disabled = !Object.keys(book).length;     // the Clear button
 }
 function askClearRecords() {
-  openDialog({ title: "Clear all records?", text: "Your fastest times for every number of cards will be deleted. This cannot be undone.",
-    yes: () => { records = {}; store.set("records", records); renderRecords(); } });
+  const moves = settings.mode === "moves";
+  openDialog({ title: moves ? "Clear move records?" : "Clear all records?",
+    text: moves ? "Your lowest move counts for every number of cards will be deleted. This cannot be undone."
+                : "Your fastest times for every number of cards will be deleted. This cannot be undone.",
+    yes: () => {
+      if (moves) { recordsMoves = {}; store.set("recordsMoves", recordsMoves); }
+      else { records = {}; store.set("records", records); }
+      renderRecords();
+    } });
 }
 
 /* ---------- 9. Confirmation dialog ---------- */
@@ -1017,10 +1113,24 @@ function later(ms, fn) {
    While running the bar glides down in one second steps and reaches 0 exactly when the time is up. */
 function drawClock(left, total, mode) {
   $("count").textContent = Math.max(0, left);
+  $("countLab").textContent = "";
+  $("timer").classList.remove("moves");
   $("bar-fill").style.width = mode === "run" ? Math.max(0, left - 1) / total * 100 + "%" : "100%";
   $("timer").classList.toggle("ready", mode === "ready");
   $("timer").classList.toggle("run", mode === "run");
   $("timer").classList.toggle("low", mode === "run" && left <= 10);
+}
+
+/* Moves mode: the counter shows the moves left, and the bar shrinks with them. */
+function drawMoves(g) {
+  const left = Math.max(0, g.s.moves - g.moves);
+  $("count").textContent = left;
+  $("countLab").textContent = "moves";
+  $("bar-fill").style.width = left / g.s.moves * 100 + "%";
+  const timer = $("timer");
+  timer.classList.add("moves");
+  timer.classList.remove("ready", "run");
+  timer.classList.toggle("low", left <= 3);
 }
 
 function beginReady() {
@@ -1036,8 +1146,9 @@ function beginReady() {
 
 function startPlay() {
   const s = { ...settings };
+  const movesMode = s.mode === "moves";
   const faces = pickFaces(s.pairs);
-  const g = game = { s, total: s.seconds, left: s.seconds, deck: shuffle([...faces, ...faces]), open: [], found: 0, locked: true, over: false, t0: 0, tClick: 0 };
+  const g = game = { s, total: s.seconds, left: s.seconds, deck: shuffle([...faces, ...faces]), open: [], found: 0, locked: true, over: false, t0: 0, tClick: 0, moves: 0 };
   const board = $("board");
   board.innerHTML = "";
   g.deck.forEach((face, i) => {
@@ -1046,12 +1157,14 @@ function startPlay() {
     card.type = "button"; card.dataset.i = i; card.setAttribute("aria-label", "Card " + (i + 1));
     board.appendChild(card);
   });
-  say("start"); show("play"); layoutBoard(); drawClock(g.left, g.total, "wait");
-  /* peek: the cards start face up for a moment, then turn over; the clock starts once they are hidden */
-  later(CONFIG.peekMs, () => {
+  say("start"); show("play"); layoutBoard();
+  if (movesMode) drawMoves(g); else drawClock(g.left, g.total, "wait");
+  /* peek: the cards start face up for a moment, then turn over; the clock starts once they are hidden (Moves mode has no clock) */
+  later(movesMode ? Math.round(s.peek * 1000) : CONFIG.peekMs, () => {
     board.querySelectorAll(".card").forEach(c => c.classList.remove("up"));
     later(CONFIG.flipMs, () => {
       g.locked = false; g.t0 = Date.now();
+      if (movesMode) return;
       drawClock(g.left, g.total, "run");
       clockTimer = setInterval(() => {
         g.left--;
@@ -1061,6 +1174,8 @@ function startPlay() {
     });
   });
 }
+
+const outOfMoves = g => g.s.mode === "moves" && g.moves >= g.s.moves;
 
 function flip(i, el) {
   const g = game;
@@ -1073,13 +1188,14 @@ function flip(i, el) {
   g.open = [];
   g.tClick = Date.now();               // the tap on the second card: the record time stops here
   g.locked = true;
+  if (g.s.mode === "moves") { g.moves++; drawMoves(g); }     // a move is turning over two cards
   if (g.deck[a.i] === g.deck[b.i]) {
     later(CONFIG.flipMs, () => pairFound(a, b));
   } else {
     later(CONFIG.flipMs, () => say("miss"));
     later(CONFIG.flipMs + CONFIG.mismatchMs, () => {
       [a.el, b.el].forEach(e => e.classList.remove("up", "pick"));
-      later(CONFIG.flipMs, () => { game.locked = false; });
+      later(CONFIG.flipMs, () => { if (outOfMoves(g)) finish(false); else game.locked = false; });
     });
   }
 }
@@ -1089,11 +1205,13 @@ function pairFound(a, b) {
   [a.el, b.el].forEach(e => { e.classList.remove("pick"); e.classList.add("done"); });
   g.found += 2;
   say("match");
-  if (g.found < g.deck.length - 2) { g.locked = false; return; }
-  /* only one pair left: it turns over by itself, and that is the win */
+  if (g.found < g.deck.length - 2) { if (outOfMoves(g)) finish(false); else g.locked = false; return; }
+  /* only one pair left: it turns over by itself, and that is the win (in Moves mode it counts as a move, so one must be left) */
+  if (outOfMoves(g)) { finish(false); return; }
   const rest = [...$("board").querySelectorAll(".card")].filter(c => !c.classList.contains("done"));
   later(CONFIG.lastPairDelayMs, () => {
     rest.forEach(c => c.classList.add("up"));
+    if (g.s.mode === "moves") { g.moves++; drawMoves(g); }
     later(CONFIG.lastPairShowMs, () => {
       rest.forEach(c => c.classList.add("done"));
       g.found += 2;
@@ -1107,25 +1225,29 @@ function finish(won) {
   if (!g || g.over) return;
   g.over = true;
   stopClock();
-  /* win time: from the moment the clock started to the tap on the last card */
-  const secs = won ? Math.max(0.1, ((g.tClick || Date.now()) - g.t0) / 1000) : 0;
+  /* the score of a win: Timed = seconds from the moment the clock started to the tap on the last card; Moves = moves used */
+  const moves = g.s.mode === "moves", book = moves ? recordsMoves : records;
+  const score = won ? (moves ? g.moves : Math.max(0.1, ((g.tClick || Date.now()) - g.t0) / 1000)) : 0;
+  const fmt = moves ? fmtMoves : fmtTime;
   let note = "";
   if (won) {
-    const prev = records[g.s.pairs] > 0 ? records[g.s.pairs] : null;
-    if (prev === null || secs < prev) {
-      records[g.s.pairs] = secs;
-      store.set("records", records);
-      note = prev === null ? "NEW RECORD" : "NEW RECORD · was " + fmtTime(prev);
-    } else note = "Record: " + fmtTime(prev);
+    const prev = book[g.s.pairs] > 0 ? book[g.s.pairs] : null;
+    if (prev === null || score < prev) {
+      book[g.s.pairs] = score;
+      store.set(moves ? "recordsMoves" : "records", book);
+      note = prev === null ? "NEW RECORD" : "NEW RECORD · was " + fmt(prev);
+    } else note = "Record: " + fmt(prev);
   }
-  setTimeout(() => { if (game === g) showResult(g, won, secs, note); }, won ? CONFIG.resultDelayMs : 0);
+  setTimeout(() => { if (game === g) showResult(g, won, score, note); }, won ? CONFIG.resultDelayMs : 0);
 }
 
 function showResult(g, won, secs, note) {
   $("resTitle").textContent = won ? "VICTORY" : "DEFEAT";
   $("resTitle").className = "result " + (won ? "win" : "lose");
   $("resCards").textContent = g.found / 2 + "/" + g.deck.length / 2;
-  $("resTime").textContent = won ? secs.toFixed(1) + " s" : g.total + " s";
+  const moves = g.s.mode === "moves";
+  $("resLab").textContent = moves ? "Moves" : "Time";
+  $("resTime").textContent = moves ? g.moves + "/" + g.s.moves : won ? secs.toFixed(1) + " s" : g.total + " s";
   $("recNote").textContent = note;
   $("rwrap").hidden = !won;
   $("rwrap").classList.toggle("won", won);
@@ -1136,7 +1258,7 @@ function showResult(g, won, secs, note) {
     $("reward").innerHTML = '<img class="spr" alt="" src="' + prize.src + '">';
     $("rname").textContent = prize.name;
   }
-  say(won ? "win" : "lose");
+  say(won ? "win" : moves ? "loseMoves" : "lose");
   show("end");
   fitResult();
 }
@@ -1265,8 +1387,9 @@ const VALID = {
   deck: v => typeof v === "string" && DECKS.some(d => d.id === v),
   vibration: v => typeof v === "boolean",
   settings: v => isObject(v) && isNum(v.pairs) && isNum(v.seconds),
-  presets: v => Array.isArray(v) && v.length <= 40 && v.every(p => isObject(p) && isNum(p.pairs) && isNum(p.seconds)),
-  records: v => isObject(v) && Object.keys(v).every(k => isNum(+k) && isNum(v[k]) && v[k] > 0)
+  presets: v => Array.isArray(v) && v.length <= 40 && v.every(p => isObject(p) && isNum(p.pairs) && (p.mode === "moves" ? isNum(p.peek) && isNum(p.moves) : isNum(p.seconds))),
+  records: v => isObject(v) && Object.keys(v).every(k => isNum(+k) && isNum(v[k]) && v[k] > 0),
+  recordsMoves: v => isObject(v) && Object.keys(v).every(k => isNum(+k) && isNum(v[k]) && v[k] > 0)
 };
 const toBase64 = text => { let bin = ""; new TextEncoder().encode(text).forEach(b => { bin += String.fromCharCode(b); }); return btoa(bin); };
 const fromBase64 = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
